@@ -2,7 +2,7 @@
 imtool close all;
 close all;
 clear;
-mvImageClose = 0.1;
+mvImageClose = 2;
 mvInitSlides % mvTitel und mvText sind noch leer ...
 
 %% -----------------------   Folie    ------------------------------------
@@ -99,16 +99,16 @@ mvClearSlide; %mvCloseSlide % pause(); Tastendruck schliesst Folie und löscht mv
 % ------------------------------------------------------------------------
 
 %% -----------------------   Folie Sudokufeld Randerkennung    ------------------------------------
-mvText = { 
-'R = regionprops(BW,''Area'',''BoundingBox'',''PixelList'');'
-'Iteration über die Regionprops R'
-'-->Größtes Regionprop finden'
-''
-'Hieraus Ecken des größten Regionprops bestimmen'    
-};
-mvTitel = 'Sudokufeld Randerkennung';
 mvNextSlide%mvOpenSlide  % Die vorbereiteten Texte werden geschrieben.
-pause();
+text(0.01, 0.9,'-Regionprops erhalten:','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+text(0.1, 0.82, 'R = regionprops(BW,''Area'',''BoundingBox'',''PixelList'');','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
+            pause();
+text(0.01, 0.72,'-Iteration über die Regionprops R','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+text(0.01, 0.62,'-->Größtes Regionprop finden','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+            pause();
+text(0.01, 0.52,'-Ecken des größten Regionprobs berechnen','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+            pause();
+            
             R = regionprops(BW,'Area','BoundingBox','PixelList');
             NR = numel(R);
             kamx = 0;
@@ -129,6 +129,34 @@ pause();
             [m,dUR] = max(diffXY); % upper right corner: diff of x and y max
 
             pts = R(kmax).PixelList([dUL dLL dLR dUR dUL],:);
+mvClearSlide; %mvCloseSlide % pause(); Tastendruck schliesst Folie und löscht mvTitel und mvText.
+% ------------------------------------------------------------------------
+
+%% -----------------------   Folie Sudokufeld Transformation  ------------------------------------
+mvNextSlide%mvOpenSlide; % Leere Folienfläche
+text(0.01, 0.9,'-Erstellen der Transformation und Anwendung der Transformation auf das Bild:','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+text(0.1, 0.82, 'T = fitgeotrans(pts(1:4,:),900*[0 0; 1 0; 1 1; 0 1],''projective'');','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
+text(0.1, 0.74, 'R = regionprops(IT,''Area'',''BoundingBox'');','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
+pause();
+        T = fitgeotrans(pts(1:4,:),900*[0 0; 1 0; 1 1; 0 1],'projective');
+        IT = logical(imwarp(double(BW),T));
+        hFig = imtool(IT); %show orignal Image
+        pause(mvImageClose);
+        close(hFig);      %close original Image after 10s
+pause();
+text(0.01, 0.64,'-In Transformiertem Bild größtes Regionprop finden (vgl. Iteration Randerkennung)','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+        R = regionprops(IT,'Area','BoundingBox');
+        NR = numel(R);
+        kmax = 0;
+        maxArea = 0;
+        for k = 1:NR
+            if R(k).Area > maxArea
+                maxArea = R(k).Area;
+                kmax = k;
+            end
+        end
+        BBmax = R(kmax).BoundingBox;
+pause();
 mvClearSlide; %mvCloseSlide % pause(); Tastendruck schliesst Folie und löscht mvTitel und mvText.
 % ------------------------------------------------------------------------
 
