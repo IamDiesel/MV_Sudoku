@@ -4,10 +4,10 @@ close all;
 clear;
 
 %% read image
-I = imread('../sudoku6.jpg'); %read rgb image (photo)
-% I = imread('../sudoku1.png'); %read rgb image (wikipedia)
+I = imread('sudoku6.jpg'); %read rgb image (photo)
+% I = imread('sudoku1.png'); %read rgb image (wikipedia)
 % I = imread('../sample.bmp');
-% imtool(I); % original image
+imtool(I); % original image
 
 %% convert to gray image
 
