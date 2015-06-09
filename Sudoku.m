@@ -219,7 +219,11 @@ for i=1:size(R)
 end
 
 %% compare with solution (only for wikipedia sudoku image)
-
+for i=1:9
+    for j=1:9
+        [test] = sudoku(i, :);
+    end
+end
 % save('sudokuWiki.mat','sudoku'); % save solution for comparison
 sudokuWiki = load('sudokuWiki.mat'); % load solution for comparison
 if sudoku == sudokuWiki.sudoku
