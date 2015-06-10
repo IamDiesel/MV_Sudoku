@@ -2,7 +2,7 @@
 imtool close all;
 close all;
 clear;
-mvImageClose = 0.1;
+mvImageClose = 20;
 mvInitSlides % mvTitel und mvText sind noch leer ...
 
 %% -----------------------   Folie    ------------------------------------
@@ -100,13 +100,13 @@ mvClearSlide; %mvCloseSlide % pause(); Tastendruck schliesst Folie und löscht mv
 
 %% -----------------------   Folie Sudokufeld Randerkennung    ------------------------------------
 mvNextSlide%mvOpenSlide  % Die vorbereiteten Texte werden geschrieben.
-text(0.01, 0.9,'-Regionprops erhalten:','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+text(0.01, 0.9,'-Objekte identifizieren:','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
 text(0.1, 0.82, 'R = regionprops(BW,''Area'',''BoundingBox'',''PixelList'');','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
             pause();
-text(0.01, 0.72,'-Iteration über die Regionprops R','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
-text(0.01, 0.62,'-->Größtes Regionprop finden','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+text(0.01, 0.72,'-Iteration über die Objekte in R','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+text(0.01, 0.62,'-->Größtes Objekt (Fläche) finden','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
             pause();
-text(0.01, 0.52,'-Ecken des größten Regionprobs berechnen','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+text(0.01, 0.52,'-Ecken des größten Objekts berechnen','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
             pause();
             
             R = regionprops(BW,'Area','BoundingBox','PixelList');
@@ -136,7 +136,7 @@ mvClearSlide; %mvCloseSlide % pause(); Tastendruck schliesst Folie und löscht mv
 mvNextSlide%mvOpenSlide; % Leere Folienfläche
 text(0.01, 0.9,'-Erstellen der Transformation und Anwendung der Transformation auf das Bild:','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
 text(0.1, 0.82, 'T = fitgeotrans(pts(1:4,:),900*[0 0; 1 0; 1 1; 0 1],''projective'');','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
-text(0.1, 0.74, 'R = regionprops(IT,''Area'',''BoundingBox'');','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
+text(0.1, 0.74, 'IT = logical(imwarp(double(BW),T));','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
 pause();
         T = fitgeotrans(pts(1:4,:),900*[0 0; 1 0; 1 1; 0 1],'projective');
         IT = logical(imwarp(double(BW),T));
@@ -144,7 +144,7 @@ pause();
         pause(mvImageClose);
         close(hFig);      %close original Image after 10s
 pause();
-text(0.01, 0.64,'-In Transformiertem Bild größtes Regionprop finden (vgl. Iteration Randerkennung)','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+text(0.01, 0.64,'-In Transformiertem Bild größtes Objekt finden (vgl. Iteration Randerkennung)','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
         R = regionprops(IT,'Area','BoundingBox');
         NR = numel(R);
         kmax = 0;
@@ -158,7 +158,7 @@ text(0.01, 0.64,'-In Transformiertem Bild größtes Regionprop finden (vgl. Iterat
         BBmax = R(kmax).BoundingBox;
 pause();
 text(0.01, 0.54,'-Sudoku ausschneiden und als eigenständiges Bild betrachten','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
-text(0.1, 0.46,'Hilfslinien verdeutlichen die gefundenen Elemente des Bildes','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
+text(0.1, 0.46,'Hilfslinien und Kreise verdeutlichen die gefundenen Elemente des Bildes','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0 0 0]);
         IT = IT(ceil(BBmax(2)):ceil(BBmax(2)+BBmax(4)),ceil(BBmax(1)):ceil(BBmax(1)+BBmax(3)));
         IT = bwmorph(IT,'close');
         imageArea = numel(IT); % number of pixels
@@ -222,6 +222,7 @@ for k = 1:NR
 end
 
 text(0.01, 0.66, '-Merkmalsextraktion durch Auslesen der Regionprops aller gefundenen Elemente','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
+text(0.01, 0.58, '-Wichtigste Merkmale: Schwerpunkt, Achsenlängen, Eulernummer','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
         %% generate input
         R = regionprops(IT,'all');
         R = R(2:size(R));
@@ -241,7 +242,7 @@ text(0.01, 0.66, '-Merkmalsextraktion durch Auslesen der Regionprops aller gefun
                     input(12,i) = R(i).Perimeter;
 
         end
-text(0.01, 0.58, '-Übergabe der Merkmale in bereits gelerntes Neuronales Netz','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
+text(0.01, 0.50, '-Übergabe der Merkmale in bereits trainiertes Neuronales Netz','Interpreter','latex','FontUnits','normalized','FontSize',0.05, 'Rotation',0,'Color',[0.1 0.1 0.1]);
         load('net.mat');
         numbers = net(input);
         [temp, blub] = max(numbers);
@@ -287,8 +288,10 @@ for i=2:10
         end
     end
 end
-
-pause();
+%         IRahmen = imread('sudoku6_Rahmen.tif');
+%         hFig = imtool(IRahmen);
+%         pause();
+%         close(hFig);
 mvClearSlide; %mvCloseSlide % pause(); Tastendruck schliesst Folie und löscht mvTitel und mvText.
 % ------------------------------------------------------------------------
 

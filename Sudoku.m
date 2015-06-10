@@ -121,7 +121,7 @@ for k = 1:NR
 end
 BBmax = R(kmax).BoundingBox;
 
-XYlimits = [floor(BBmax(1)) + [1 BBmax(3)] floor(BBmax(2)) + [1 BBmax(4)]];
+XYlimits = [floor(BBmax(1)) + [1 BBmax(3)-1] floor(BBmax(2)) + [1 BBmax(4)-1]];
 pts = [ XYlimits(3) XYlimits(1); XYlimits(3) XYlimits(2); XYlimits(4) XYlimits(2); XYlimits(4) XYlimits(1); XYlimits(3) XYlimits(1) ];
 figure;
 imshow(IT);
@@ -162,7 +162,7 @@ for k = 1:NR
             
             Pnew(k,:) = [R(k).BoundingBox(1)+R(k).BoundingBox(3)/2 R(k).BoundingBox(2)+R(k).BoundingBox(4)/2];       
             if inpolygon(Pnew(k,1),Pnew(k,2),pts(:,1),pts(:,2))
-                h_digitcircles(k) = plot(Pnew(k,1),Pnew(k,2),'ro','markersize',max([R(k).BoundingBox(3:4) 20]));
+                h_digitcircles(k) = plot(Pnew(k,1),Pnew(k,2),'ro','markersize',max([R(k).BoundingBox(3:4) 20]), 'linewidth',2);
                 kgood(k) = 1;
             end      
     end
@@ -219,11 +219,6 @@ for i=1:size(R)
 end
 
 %% compare with solution (only for wikipedia sudoku image)
-for i=1:9
-    for j=1:9
-        [test] = sudoku(i, :);
-    end
-end
 % save('sudokuWiki.mat','sudoku'); % save solution for comparison
 sudokuWiki = load('sudokuWiki.mat'); % load solution for comparison
 if sudoku == sudokuWiki.sudoku
